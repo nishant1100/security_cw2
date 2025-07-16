@@ -1,0 +1,124 @@
+# Node / Express
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# dotenv environment variables
+.env
+.env.*.local
+
+# Logs
+logs
+*.log
+*.log.*
+log/
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Database dumps
+*.sqlite
+*.sqlite3
+*.mongo
+*.db
+*.tgz
+dump/
+*.sql
+
+# OS junk
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+._*
+
+# Compiled files
+dist/
+build/
+tmp/
+temp/
+.cache/
+.cache-loader/
+coverage/
+.nyc_output/
+lib-cov/
+*.tsbuildinfo
+
+# Next.js or other SSR
+.next/
+out/
+
+# React
+*.map
+
+# Testing
+coverage/
+.nyc_output/
+jest-html-reporters-*.html
+
+# Misc
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# PM2 logs
+pids/
+*.pid
+*.pid.lock
+
+# Build output
+build/
+public/build/
+
+# Bower
+bower_components/
+
+# VSCode settings
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# React Native
+ios/Pods/
+android/.gradle/
+android/app/build/
+android/.idea/
+*.keystore
+
+# macOS
+*.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# npm logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# ESLint cache
+.eslintcache
+
+# Storybook
+storybook-static/
+
+# dotenv
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

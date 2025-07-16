@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { clearCart } from '../../redux/features/cart/cartSlice';
 import { useCreateOrderMutation } from '../../redux/orders/ordersApi';
+
+
 
 function CheckoutPage() {
     const cartItems = useSelector(state => state.cart.cartItems);
+    const user = JSON.parse(localStorage.getItem("user"));
+    console.log("User from localStorage:", user);
+    const dispatch = useDispatch();
+
 
     const [createOrder] = useCreateOrderMutation();
     const [isChecked, setIsChecked] = useState(false);
@@ -23,8 +30,8 @@ function CheckoutPage() {
     // Calculate total price here from cartItems
     const totalPrice = cartItems.reduce((acc, item) => {
         // Check if new_price exists and get the value from $numberDecimal
-        const price = item.new_price && item.new_price.$numberDecimal 
-            ? parseFloat(item.new_price.$numberDecimal) 
+        const price = item.new_price && item.new_price.$numberDecimal
+            ? parseFloat(item.new_price.$numberDecimal)
             : 0;
         return acc + price;
     }, 0).toFixed(2);
@@ -34,6 +41,7 @@ function CheckoutPage() {
     const onSubmit = async (data) => {
         setIsSubmitting(true);  // Set submitting state to true
         const newOrder = {
+            userId: user?._id,
             name: data.name,
             email: data.email,  // Use the email entered by the user
             address: {
@@ -44,14 +52,18 @@ function CheckoutPage() {
             },
             phone: data.phone,
             productIds: cartItems.map((item) => item._id),
-            totalPrice: totalPrice
+            totalPrice: Number(totalPrice)
+
         };
 
         try {
             const response = await createOrder(newOrder).unwrap();
             alert("Order placed successfully!");
+            // Clear the cart after successful order
+            dispatch(clearCart());
+
             navigate("/");  // Redirect to the home page after placing the order
-            window.location.reload();  
+            // window.location.reload();
         } catch (error) {
             alert("Error placing order. Please try again.");
         } finally {

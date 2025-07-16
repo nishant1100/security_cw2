@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { useForm } from "react-hook-form";
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [message, setMessage] = useState('');
@@ -12,16 +11,16 @@ const Login = () => {
     const onSubmit = async (data) => {
         try {
             const response = await axios.post("http://localhost:3000/api/auth/login", data);
-            localStorage.setItem("token", response.data.token); // Store token
-            localStorage.setItem("email", data.email);  // Save the email after login
-            
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+
             setMessage("Login successful");
             navigate("/"); // Redirect to the home page after login
         } catch (error) {
             setMessage(error.response?.data?.message || "Login failed");
         }
     };
-    
+
 
     return (
         <div className='h-screen flex justify-center items-center'>

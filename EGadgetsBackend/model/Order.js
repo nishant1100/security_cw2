@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const orderSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Credential', // or the model you're using for users
+    ref: 'Credential',
     required: true,
   },
   name: {
@@ -15,8 +15,14 @@ const orderSchema = new mongoose.Schema({
     required: true,
   },
   phone: {
-    type: Number,
+    type: String,   // ← changed from Number to String
     required: true,
+  },
+  address: {         // ← new address field
+    city: { type: String },
+    country: { type: String },
+    state: { type: String },
+    zipcode: { type: String },
   },
   productIds: [
     {

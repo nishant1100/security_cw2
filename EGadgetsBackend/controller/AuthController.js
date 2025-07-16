@@ -78,32 +78,32 @@ const register = async (req, res) => {
 // ✅ Verify & Save User when clicking the email link
 const verifyUser = async (req, res) => {
   try {
-      const { token } = req.query;
+    const { token } = req.query;
 
-      if (!token) {
-          return res.status(400).json({ message: "No token provided" });
-      }
+    if (!token) {
+      return res.status(400).json({ message: "No token provided" });
+    }
 
-      // Decode token
-      const decoded = jwt.verify(token, SECRET_KEY);
-      const { username, email, password, profilePicture, bio } = decoded;
+    // Decode token
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const { username, email, password, profilePicture, bio } = decoded;
 
-      // Check if the user already exists in the database
-      const existingUser = await Credential.findOne({ email });
-      if (existingUser) {
-          return res.status(400).json({ message: "User already verified or registered" });
-      }
+    // Check if the user already exists in the database
+    const existingUser = await Credential.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already verified or registered" });
+    }
 
-      // Hash password and save the user to the database
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser = new Credential({ username, email, password: hashedPassword, profilePicture, bio: bio || "" });
-      await newUser.save();
+    // Hash password and save the user to the database
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new Credential({ username, email, password: hashedPassword, profilePicture, bio: bio || "" });
+    await newUser.save();
 
-      // ✅ Redirect user to React verification success page
-      res.redirect("http://localhost:5173/verify-success");
+    // ✅ Redirect user to React verification success page
+    res.redirect("http://localhost:5173/verify-success");
 
   } catch (error) {
-      res.status(400).json({ message: "Verification failed", error: error.message });
+    res.status(400).json({ message: "Verification failed", error: error.message });
   }
 };
 
@@ -129,7 +129,16 @@ const login = async (req, res) => {
       expiresIn: "2h",
     });
 
-    res.json({ message: "Login successful", token, userId: cred._id });
+    res.json({
+      message: "Login successful",
+      token,
+      user: {
+        _id: cred._id,
+        username: cred.username,
+        email: cred.email,
+      },
+    });
+
   } catch (error) {
     res.status(500).json({ message: "Error logging in", error: error.message });
   }

@@ -5,27 +5,35 @@ const ordersApi = createApi({
     reducerPath: 'ordersApi',
     baseQuery: fetchBaseQuery({
         baseUrl: `${getBaseUrl()}/api/orders`,
-        credentials: 'include'
+        credentials: 'include',
     }),
     tagTypes: ['Orders'],
     endpoints: (builder) => ({
-        createOrder: (builder.mutation) ({
+        createOrder: builder.mutation({  // fix here
             query: (newOrder) => ({
                 url: "/",
                 method: "POST",
                 body: newOrder,
                 credentials: 'include',
-            })
-        }),
-        getOrderByEmail: (builder.query) ({
-            query: (email) => ({
-                url: `/email/${email}`
             }),
-            providesTags: ['Orders']
-        })
-    })
-})
+            invalidatesTags: ['Orders'],
+        }),
+        getOrderByUserId: builder.query({  // new endpoint by userId
+            query: (userId) => `/user/${userId}`,
+            providesTags: ['Orders'],
+        }),
+        getAllOrders: builder.query({
+            query: () => "/",
+            providesTags: ['Orders'],
+        }),
+        // If you want to keep getOrderByEmail (but your backend must support it)
+        // getOrderByEmail: builder.query({
+        //     query: (email) => `/email/${email}`,
+        //     providesTags: ['Orders'],
+        // }),
+    }),
+});
 
-export const {useCreateOrderMutation, useGetOrderByEmailQuery} = ordersApi;
+export const { useCreateOrderMutation, useGetOrderByUserIdQuery, useGetAllOrdersQuery } = ordersApi;
 
 export default ordersApi;

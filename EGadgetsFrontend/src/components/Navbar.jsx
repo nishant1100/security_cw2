@@ -7,7 +7,7 @@ import avatarImg from "../assets/avatar.png";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
-import footerLogo from "../assets/logo_without_background.png";
+import footerLogo from "../assets/EGadget_logo.png";
 
 const navigation = [
     { name: "Dashboard", href: "/user-dashboard" },

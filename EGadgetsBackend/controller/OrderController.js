@@ -75,7 +75,7 @@ const createAOrder = async (req, res) => {
     });
 
     const mailOptions = {
-      from: 'nishantkjnkrstha10@gmail.com',
+      from: '"e~Gadgets" <nishantkjnkrstha10@gmail.com>',
       to: userExists.email,
       subject: 'Your Order Confirmation',
       text: `Hello ${name},\n\nThank you for your order.`,

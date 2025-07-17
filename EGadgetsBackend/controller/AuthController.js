@@ -23,7 +23,7 @@ const sendVerificationEmail = async (email, token) => {
   const verificationLink = `http://localhost:3000/api/auth/verify?token=${token}`;
 
   const mailOptions = {
-    from: '"E-commerce" <nishantkjnkrstha10@gmail.com>',
+    from: '"e~Gadgets" <nishantkjnkrstha10@gmail.com>',
     to: email,
     subject: "Confirm Your Registration",
     html: `

@@ -1,74 +1,3 @@
-// import React from 'react';
-// import footerLogo from "../assets/wh-logo.png";
-// import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
-
-// const Footer = () => {
-//   return (
-//     <footer id="footer" className="bg-blue-400 from-gray-900 via-gray-800 to-gray-900 text-white px-6 py-12">
-//       {/* Top Grid Section */}
-//       <div className="container mx-auto grid md:grid-cols-2 gap-12">
-//         {/* Left Side */}
-//         <div>
-//           <div className="flex flex-col items-center md:items-start text-center md:text-left">
-//             <img src={footerLogo} alt="EGadget Logo" className="w-40 mb-5" />
-//             <p className="text-sm text-gray-300 mb-4 max-w-md">
-//               EGadget is Nepal’s trusted platform for buying smartphones discover the latest models at unbeatable prices.
-//             </p>
-//             <ul className="flex flex-wrap justify-center md:justify-start gap-4 text-sm">
-//               {["Home", "Services", "About Us", "Contact"].map((item) => (
-//                 <li key={item}>
-//                   <a
-//                     href={`#${item.toLowerCase().replace(/\s/g, "")}`}
-//                     className="hover:text-primary transition-colors duration-300"
-//                   >
-//                     {item}
-//                   </a>
-//                 </li>
-//               ))}
-//             </ul>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Divider */}
-//       <div className="border-t border-gray-700 mt-12 pt-6 container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-
-//         {/* Socials */}
-//         <div className="flex gap-6">
-//           <a
-//             href="https://facebook.com"
-//             target="_blank"
-//             rel="noopener noreferrer"
-//             className="hover:text-primary transform hover:scale-110 transition-transform duration-300"
-//           >
-//             <FaFacebook size={24} />
-//           </a>
-//           <a
-//             href="https://twitter.com"
-//             target="_blank"
-//             rel="noopener noreferrer"
-//             className="hover:text-primary transform hover:scale-110 transition-transform duration-300"
-//           >
-//             <FaTwitter size={24} />
-//           </a>
-//           <a
-//             href="https://instagram.com"
-//             target="_blank"
-//             rel="noopener noreferrer"
-//             className="hover:text-primary transform hover:scale-110 transition-transform duration-300"
-//           >
-//             <FaInstagram size={24} />
-//           </a>
-//         </div>
-//       </div>
-//     </footer>
-//   );
-// };
-
-// export default Footer;
-
-
-
 import React from 'react';
 import footerLogo from "../assets/wh-logo.png";
 import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
@@ -117,7 +46,7 @@ const Footer = () => {
             <ul className="space-y-1 text-sm">
               <li>Email: info@egadget.com</li>
               <li>Phone: +977-9812345678</li>
-              <li>Location: Kathmandu, Nepal</li>
+              <li>Location: Bhaktapur, Nepal</li>
               <li>Hours: 9:00 AM – 6:00 PM</li>
             </ul>
           </div>
@@ -153,7 +82,7 @@ const Footer = () => {
       </div>
 
       {/* Divider */}
-      <div className="border-t border-white mt-12 pt-6 container mx-auto text-center text-sm text-gray-200">
+      <div className="border-t border-white-600 mt-12 pt-6 container mx-auto text-center text-sm text-gray-200">
         © {new Date().getFullYear()} EGadget. All rights reserved.
       </div>
     </footer>

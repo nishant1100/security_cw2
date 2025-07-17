@@ -46,11 +46,11 @@ const Navbar = () => {
         {/* Center Navigation Links */}
         <div className="flex-1 flex justify-center">
           <div className="flex items-center space-x-6 text-gray-700 font-medium">
-            <Link to="/" className="hover:text-purple-600 transition">Home</Link>
-            <Link to="/browse" className="hover:text-purple-600 transition">Products</Link>
+            <Link to="/" className="hover:text-blue-800 transition">Home</Link>
+            <Link to="/browse" className="hover:text-blue-800 transition">Products</Link>
             <button
               onClick={scrollToFooter}
-              className="flex items-center space-x-6 text-gray-700 font-medium">
+              className="flex items-center space-x-6 text-gray-700 font-medium hover:text-blue-800 transition">
               Contact Us
             </button>
           </div>

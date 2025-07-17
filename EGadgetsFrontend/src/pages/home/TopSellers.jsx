@@ -100,12 +100,12 @@ export const TopSellers = () => {
 // import "swiper/css/navigation";
 
 // const categories = [
-//   "Choose a Category",
-//   "Smartphones",
-//   "Accessories",
-//   "Tablets",
-//   "Wearables",
-//   "Gaming",
+//  "Choose a Category",
+//   "Android Phones",
+//   "iPhone",
+//   "5G Phones",
+//   "Gaming Phones",
+//   "Refurbished Phones",
 // ];
 
 // export const TopSellers = () => {

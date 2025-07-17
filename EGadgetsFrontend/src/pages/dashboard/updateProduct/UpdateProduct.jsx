@@ -101,7 +101,7 @@ const UpdateProduct = () => {
           options={[
             { value: '', label: 'Select Category' },
             { value: 'Android Phones', label: 'Android Phones' },
-            { value: 'iPhones', label: 'iPhones' },
+            { value: 'iPhone', label: 'iPhone' },
             { value: '5G Phones', label: '5G Phones' },
             { value: 'Gaming Phones', label: 'Gaming Phones' },
             { value: 'Refurbished Phones', label: 'Refurbished Phones' },

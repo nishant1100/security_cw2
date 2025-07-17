@@ -33,7 +33,7 @@ const createProduct = async (req, res) => {
 
     try {
       // Destructure fields from the request body
-      const { title, artistName, description, old_price, new_price, category, trending } = req.body;
+      const { title, productName, description, old_price, new_price, category, trending } = req.body;
 
       // Handle product image and file if available
       const productImage = req.files["productImage"]
@@ -47,7 +47,7 @@ const createProduct = async (req, res) => {
       // Create a new product document
       const newProduct = new Product({
         title,
-        artistName,
+        productName,
         description,
         old_price,
         new_price,

@@ -4,11 +4,11 @@ import { useFetchAllProductsQuery } from "../../redux/features/products/productA
 
 const categories = [
   "All Categories",
-  "Album",
-  "Mixtape",
-  "Single",
-  "EPs",
-  "Concert Tickets",
+  "Android Phone",
+  "iPhones",
+  "5G Phones",
+  "Gaming Phones",
+  "Refurbished Phones",
 ];
 
 const BrowsePage = () => {
@@ -26,7 +26,7 @@ const BrowsePage = () => {
   // Filter products by search term
   const searchFilteredProducts = filteredProducts.filter((product) =>
     product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.artistName.toLowerCase().includes(searchTerm.toLowerCase())
+    product.productName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Sort products

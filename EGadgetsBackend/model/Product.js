@@ -7,7 +7,7 @@ const productSchema = new mongoose.Schema(
       required: true,
       maxlength: 100,
     },
-    artistName: {
+    productName: {
       type: String,
       required: true,
       maxlength: 100,

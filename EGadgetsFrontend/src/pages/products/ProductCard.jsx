@@ -39,15 +39,20 @@ const ProductCard = ({ product }) => {
             </h3>
           </Link>
           <p className="text-gray-600 mb-5">
-            {product?.artistName.length > 80
-              ? `${product?.artistName.slice(0, 80)}...`
-              : product?.artistName}
-          </p>
-          <p className="text-gray-600 mb-5">
-            {product?.description.length > 80
-              ? `${product?.description.slice(0, 80)}...`
-              : product?.description}
-          </p>
+          {product?.productName
+            ? product.productName.length > 80
+              ? `${product.productName.slice(0, 80)}...`
+              : product.productName
+            : "Unknown Artist"}
+        </p>
+
+        <p className="text-gray-600 mb-5">
+          {product?.description
+            ? product.description.length > 80
+              ? `${product.description.slice(0, 80)}...`
+              : product.description
+            : "No description available"}
+        </p>
           <p className="font-medium mb-5">
             Rs. {newPrice}{' '} {/* Use the converted value */}
             <span className="line-through font-normal ml-2">

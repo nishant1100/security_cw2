@@ -14,7 +14,7 @@ const AddProduct = () => {
   const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append('title', data.title);
-    formData.append('artistName', data.artistName);
+    formData.append('productName', data.productName);
     formData.append('description', data.description);
     formData.append('old_price', data.oldPrice);
     formData.append('new_price', data.newPrice);
@@ -65,17 +65,17 @@ const AddProduct = () => {
           register={register}
           placeholder="Enter product title"
         />
-        {errors.title && <p className="text-red-500 text-sm">Title is required</p>}
+        {errors.title && <p className="text-red-500 text-sm">Product is required</p>}
         
         {/* Artist Name Input */}
         <InputField
-          label="Artist Name"
-          name="artistName"
+          label="Product Name"
+          name="productName"
           type="text"
           register={register}
-          placeholder="Enter artist name"
+          placeholder="Enter product name"
         />
-        {errors.artistName && <p className="text-red-500 text-sm">Artist Name is required</p>}
+        {errors.productName && <p className="text-red-500 text-sm">Artist Name is required</p>}
 
         {/* Description Input */}
         <InputField
@@ -93,11 +93,11 @@ const AddProduct = () => {
           name="category"
           options={[
             { value: '', label: 'Select Category' },
-            { value: 'Album', label: 'Album' },
-            { value: 'Mixtape', label: 'Mixtape' },
-            { value: 'Single', label: 'Single' },
-            { value: 'EPs', label: 'EPs' },
-            { value: 'Concert Tickets', label: 'Concert Tickets' },
+            { value: 'Android Phones', label: 'Android Phones' },
+            { value: 'iPhones', label: 'iPhones' },
+            { value: '5G Phones', label: '5G Phones' },
+            { value: 'Gaming Phones', label: 'Gaming Phones' },
+            { value: 'Refurbished Phones', label: 'Refurbished Phones' },
           ]}
           register={register}
         />

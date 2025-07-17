@@ -100,11 +100,11 @@ const UpdateProduct = () => {
           name="category"
           options={[
             { value: '', label: 'Select Category' },
-            { value: 'Album', label: 'Album' },
-            { value: 'Mixtape', label: 'Mixtape' },
-            { value: 'Single', label: 'Single' },
-            { value: 'EPs', label: 'EPs' },
-            { value: 'Concert Tickets', label: 'Concert Tickets' },
+            { value: 'Android Phones', label: 'Android Phones' },
+            { value: 'iPhones', label: 'iPhones' },
+            { value: '5G Phones', label: '5G Phones' },
+            { value: 'Gaming Phones', label: 'Gaming Phones' },
+            { value: 'Refurbished Phones', label: 'Refurbished Phones' },
           ]}
           register={register}
         />

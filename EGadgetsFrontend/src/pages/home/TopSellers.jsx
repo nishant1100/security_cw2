@@ -13,7 +13,7 @@ import "swiper/css/navigation";
 const categories = [
   "All Categories",
   "Android Phones",
-  "iPhones",
+  "iPhone",
   "5G Phones",
   "Gaming Phones",
   "Refurbished Phones",

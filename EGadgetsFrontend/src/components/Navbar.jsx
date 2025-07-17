@@ -37,14 +37,6 @@ const Navbar = () => {
                     <Link to="/">
                         <img src={footerLogo} alt="Logo" className="w-28 md:w-36" />
                     </Link>
-
-                    {/* Browse Button */}
-                    <Link
-                        to="/browse"
-                        className="bg-primary py-1 px-4 flex items-center rounded-md text-black font-semibold hover:scale-105 transition-all duration-300 text-sm md:text-base"
-                    >
-                        Shop Now
-                    </Link>
                 </div>
 
                 {/* Search Input */}

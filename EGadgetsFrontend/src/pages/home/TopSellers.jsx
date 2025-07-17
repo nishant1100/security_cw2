@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import ProductCard from "../products/ProductCard";
@@ -7,180 +7,81 @@ import { useFetchAllProductsQuery } from "../../redux/features/products/productA
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
-import 'swiper/css/navigation';
+import "swiper/css/navigation";
 
-
+// Smartphone-related categories
 const categories = [
-  "Choose a Category",
+  "All Categories",
   "Android Phones",
-  "iPhone",
+  "iPhones",
   "5G Phones",
   "Gaming Phones",
   "Refurbished Phones",
 ];
-export const TopSellers = () => {
 
-  const [selectedCategory, setSelectedCategory] = useState("Choose a Category");
-  
-  const {data:products = []} = useFetchAllProductsQuery();
-  console.log(products)
+export const TopSellers = () => {
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+
+  const { data: products = [] } = useFetchAllProductsQuery();
 
   const filteredProducts =
-    selectedCategory === "Choose a Category"
+    selectedCategory === "All Categories"
       ? products
       : products.filter((product) => product.category === selectedCategory);
 
-  console.log(filteredProducts);
-
   return (
-    <div className="py-10">
-      <h2 className="text-3xl font-semibold mb-6">Recommended For You</h2>
+    <div className="py-12 pl-6 pr-2 sm:pl-10 sm:pr-4 lg:pl-16 lg:pr-8 bg-white">
+      <div className="max-w-full">
+        <h2 className="text-3xl font-bold mb-6 text-gray-800">
+          Recommended For You
+        </h2>
 
-      {/* cateogyr filter  garne */}
+        {/* Dropdown filter */}
+        <div className="mb-8">
+          <label
+            htmlFor="category"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Filter by Category
+          </label>
+          <select
+            id="category"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="w-full sm:w-64 bg-white border border-gray-300 rounded-lg shadow-sm py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+          >
+            {categories.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <div className="mb-8 flex items-center">
-        <select
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          name="category"
-          id="category"
-          className="border bg-purple-100 p-2 rounded-md rounded-md py-4 focus:outline-none"
+        {/* Product Swiper */}
+        <Swiper
+          slidesPerView={1}
+          spaceBetween={20}
+          navigation={true}
+          breakpoints={{
+            640: { slidesPerView: 1 },
+            768: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
+          }}
+          modules={[Pagination, Navigation]}
+          className="mySwiper"
         >
-          {categories.map((category, index) => (
-            <option key={index} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((product, index) => (
+              <SwiperSlide key={index}>
+                <ProductCard product={product} />
+              </SwiperSlide>
+            ))
+          ) : (
+            <p className="text-gray-500 p-4">No products found in this category.</p>
+          )}
+        </Swiper>
       </div>
-
-      <Swiper
-        slidesPerView={1}
-        spaceBetween={30}
-        navigation={true} 
-        breakpoints={{
-          640: {
-            slidesPerView: 1,
-            spaceBetween: 20,
-          },
-          768: {
-            slidesPerView: 2,
-            spaceBetween: 40,
-          },
-          1024: {
-            slidesPerView: 2,
-            spaceBetween: 50,
-          },
-          1180: {
-            slidesPerView: 3,
-            spaceBetween: 50,
-          },
-        }}
-        modules={[Pagination,Navigation]}
-        className="mySwiper"
-      >
-        {filteredProducts.length > 0 && filteredProducts.map((product, index) => (
-          <SwiperSlide key={index}> 
-            <ProductCard key={index} product={product} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
     </div>
   );
 };
-
-
-// import React, { useState } from "react";
-// import { Pagination, Navigation } from "swiper/modules";
-// import { Swiper, SwiperSlide } from "swiper/react";
-// import ProductCard from "../products/ProductCard";
-// import { useFetchAllProductsQuery } from "../../redux/features/products/productApi";
-
-// import "swiper/css";
-// import "swiper/css/pagination";
-// import "swiper/css/navigation";
-
-// const categories = [
-//  "Choose a Category",
-//   "Android Phones",
-//   "iPhone",
-//   "5G Phones",
-//   "Gaming Phones",
-//   "Refurbished Phones",
-// ];
-
-// export const TopSellers = () => {
-//   const [selectedCategory, setSelectedCategory] = useState("Choose a Category");
-//   const { data: products = [] } = useFetchAllProductsQuery();
-
-//   const filteredProducts =
-//     selectedCategory === "Choose a Category"
-//       ? products
-//       : products.filter((product) => product.category === selectedCategory);
-
-//   return (
-//     <section className="py-20 bg-gray-50">
-//       <div className="max-w-screen-xl mx-auto px-4">
-//         {/* Heading */}
-//         <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-10 text-center">
-//           🛍️ Recommended For You
-//         </h2>
-
-//         {/* Category Filter */}
-//         <div className="flex justify-center mb-10">
-//           <select
-//             onChange={(e) => setSelectedCategory(e.target.value)}
-//             value={selectedCategory}
-//             name="category"
-//             id="category"
-//             className="px-5 py-3 rounded-md border border-gray-300 bg-white text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
-//           >
-//             {categories.map((category, index) => (
-//               <option key={index} value={category}>
-//                 {category}
-//               </option>
-//             ))}
-//           </select>
-//         </div>
-
-//         {/* Product Swiper */}
-//         {filteredProducts.length > 0 ? (
-//           <Swiper
-//             slidesPerView={1}
-//             spaceBetween={30}
-//             navigation={true}
-//             breakpoints={{
-//               640: {
-//                 slidesPerView: 1,
-//                 spaceBetween: 20,
-//               },
-//               768: {
-//                 slidesPerView: 2,
-//                 spaceBetween: 30,
-//               },
-//               1024: {
-//                 slidesPerView: 2,
-//                 spaceBetween: 40,
-//               },
-//               1180: {
-//                 slidesPerView: 3,
-//                 spaceBetween: 40,
-//               },
-//             }}
-//             modules={[Pagination, Navigation]}
-//             className="mySwiper"
-//           >
-//             {filteredProducts.map((product, index) => (
-//               <SwiperSlide key={index}>
-//                 <ProductCard product={product} />
-//               </SwiperSlide>
-//             ))}
-//           </Swiper>
-//         ) : (
-//           <p className="text-center text-gray-500 mt-10">
-//             No products available in this category.
-//           </p>
-//         )}
-//       </div>
-//     </section>
-//   );
-// };

@@ -43,7 +43,7 @@ const Navbar = () => {
                         to="/browse"
                         className="bg-primary py-1 px-4 flex items-center rounded-md text-black font-semibold hover:scale-105 transition-all duration-300 text-sm md:text-base"
                     >
-                        Browse
+                        Shop Now
                     </Link>
                 </div>
 

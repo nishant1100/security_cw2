@@ -4,8 +4,8 @@ import { useFetchAllProductsQuery } from "../../redux/features/products/productA
 
 const categories = [
   "All Categories",
-  "Android Phone",
-  "iPhones",
+  "Android Phones",
+  "iPhone",
   "5G Phones",
   "Gaming Phones",
   "Refurbished Phones",
@@ -52,7 +52,7 @@ const BrowsePage = () => {
       <div className="mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <input
           type="text"
-          placeholder="Search by Name or Artist"
+          placeholder="Search by product name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="border p-3 rounded-md w-full sm:w-72 shadow-sm"

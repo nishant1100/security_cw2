@@ -19,8 +19,8 @@ const Recommended = () => {
     const trendingProducts = products.filter(product => product.trending === true);
 
     return (
-        <div className='py-16'>
-            <h2 className='text-3xl font-semibold mb-6'>Trending Products</h2>
+        <div className='py-12 pl-6 pr-2 sm:pl-10 sm:pr-4 lg:pl-16 lg:pr-8 bg-white'>
+            <h2 className='text-3xl font-bold mb-6 text-gray-800'>Best Selling Products</h2>
 
             <Swiper
                 slidesPerView={1}

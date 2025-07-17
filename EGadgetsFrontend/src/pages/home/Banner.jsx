@@ -67,7 +67,7 @@ const Banner = () => {
         <div className="flex justify-center md:justify-start">
           <Link
             to="/browse"
-            className="bg-purple-600 text-white py-3 px-6 rounded-md font-semibold shadow-md hover:bg-purple-700 transition-all duration-300 text-sm md:text-base"
+            className="bg-blue-600 text-white py-3 px-6 rounded-md font-semibold shadow-md hover:bg-blue-800 transition-all duration-300 text-sm md:text-base"
           >
             Shop Now
           </Link>

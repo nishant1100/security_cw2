@@ -130,14 +130,14 @@ const ProductCard = ({ product }) => {
           </p>
 
           <div className="mb-4">
-            <span className="text-lg font-semibold text-purple-700">Rs. {newPrice}</span>
+            <span className="text-lg font-semibold text-blue-600">Rs. {newPrice}</span>
             <span className="ml-3 text-sm line-through text-gray-400">Rs. {oldPrice}</span>
           </div>
         </div>
 
         <button
           onClick={() => handleAddToCart(product)}
-          className="flex items-center justify-center gap-2 px-5 py-2 mt-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-200"
+          className="flex items-center justify-center gap-2 px-5 py-2 mt-2 bg-blue-600 text-white rounded-lg hover:bg-blue-800 transition duration-200"
         >
           <FiShoppingCart className="text-lg" />
           <span>Add to Cart</span>

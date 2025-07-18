@@ -33,7 +33,7 @@ export const TopSellers = () => {
     <div className="py-12 pl-6 pr-2 sm:pl-10 sm:pr-4 lg:pl-16 lg:pr-8 bg-white">
       <div className="max-w-full">
         <h2 className="text-3xl font-bold mb-6 text-gray-800">
-          Recommended For You
+          Our Products
         </h2>
 
         {/* Dropdown filter */}

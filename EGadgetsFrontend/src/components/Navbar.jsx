@@ -34,7 +34,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="bg-blue-300 max-w-screen-2xl mx-auto px-4 py-4 border-b shadow-md bg-white">
+    <header className="bg-blue-400 max-w-screen-2xl mx-auto px-4 py-4 border-b shadow-md bg-white">
       <nav className="flex items-center justify-between">
         {/* Logo Section */}
         <div className="flex-shrink-0">

@@ -36,7 +36,7 @@ const OrderPage = () => {
                             <p className="text-gray-800 font-semibold">
                                 Total Price:{" "}
                                 <span className="text-indigo-600">
-                                    ${order.totalPrice?.toFixed(2)}
+                                    Nrs. {order.totalPrice?.toFixed(2)}
                                 </span>
                             </p>
                         </div>
@@ -59,26 +59,26 @@ const OrderPage = () => {
                             ) : (
                                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {order.productIds.map((product) => (
-                                        <li
-                                            key={product._id}
-                                            className="flex border rounded-lg p-3 shadow hover:shadow-md transition duration-300"
-                                        >
-                                            <img
-                                                src={product.image || "/placeholder.png"}
-                                                alt={product.name}
-                                                className="w-24 h-24 object-cover rounded mr-4 border"
-                                            />
-                                            <div>
-                                                <h5 className="text-lg font-bold text-gray-800">{product.name}</h5>
-                                                <p className="text-gray-600 text-sm mt-1">
-                                                    {product.description || "No description available"}
-                                                </p>
-                                                <p className="text-indigo-600 font-semibold mt-2">
-                                                    ${Number(product.price).toFixed(2)}
-                                                </p>
-                                            </div>
-                                        </li>
-                                    ))}
+                                <li
+                                    key={product._id}
+                                    className="flex border rounded-lg p-3 shadow hover:shadow-md transition duration-300"
+                                >
+                                    <img
+                                    src={product?.productImage || "/placeholder.png"}
+                                    alt={product?.productName || "Product"}
+                                    className="w-24 h-24 object-cover rounded mr-4 border"
+                                    />
+                                    <div>
+                                    <h5 className="text-lg font-bold text-gray-800">
+                                        {product?.productName || "Unnamed Product"}
+                                    </h5>
+                                    <p className="text-gray-600 text-sm mt-1">
+                                        {product?.description || "No description available"}
+                                    </p>
+                                    </div>
+                                </li>
+                                ))}
+
                                 </ul>
                             )}
                         </div>

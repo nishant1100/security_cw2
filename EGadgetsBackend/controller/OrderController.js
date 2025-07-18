@@ -107,27 +107,33 @@ const getAllOrders = async (req, res) => {
   }
 };
 
-// Get Orders by User Email
 // Get Orders by User ID
 const getOrderByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // Validate if the userId is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid userId format" });
     }
 
-    const orders = await Order.find({ userId }).populate('productIds');
+    const orders = await Order.find({ userId }).populate({
+      path: "productIds",
+      select: "productName new_price productImage description",
+    });
+
     if (!orders || orders.length === 0) {
       return res.status(404).json({ message: "No orders found for this userId" });
     }
+    
+    console.log('Populated Orders:', orders);  // Check output here
+
     res.status(200).json(orders);
   } catch (error) {
     console.error("Error getting orders by userId", error);
     res.status(500).json({ message: "Failed to fetch orders by userId" });
   }
 };
+
 
 
 module.exports = {

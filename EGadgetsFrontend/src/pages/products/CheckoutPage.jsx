@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { clearCart } from '../../redux/features/cart/cartSlice';
 import { useCreateOrderMutation } from '../../redux/orders/ordersApi';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 
 function CheckoutPage() {
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -36,6 +38,27 @@ function CheckoutPage() {
       setDiscount(0);
     }
   };
+
+  const handleEsewa = async () => {
+  const transaction_uuid = uuidv4();
+  const amount = discountedTotal;
+
+  const { data } = await axios.post('/api/esewa/initiate', { amount, transaction_uuid });
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = data.api_endpoint;
+
+  for (let key in data) {
+    const hidden = document.createElement('input');
+    hidden.type = 'hidden';
+    hidden.name = key;
+    hidden.value = data[key];
+    form.appendChild(hidden);
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+};
 
   const handlePaymentSubmit = async (data) => {
     setIsSubmitting(true);

@@ -77,9 +77,29 @@ const createAOrder = async (req, res) => {
     const mailOptions = {
       from: '"e~Gadgets" <nishantkjnkrstha10@gmail.com>',
       to: userExists.email,
-      subject: 'Your Order Confirmation',
-      text: `Hello ${name},\n\nThank you for your order.`,
+      subject: 'Your Order Confirmation from e~Gadgets',
+      text: `Hi ${name},
+
+    Thank you for shopping with e~Gadgets! 🎉
+
+    Your order has been successfully placed. Below are the details:
+
+    Order ID: ${savedOrder._id}
+    Total Price: NPR ${totalPrice.toLocaleString()}
+    Phone: ${phone}
+
+    Shipping Address:
+    ${address.city}, ${address.state}, ${address.country} - ${address.zipcode}
+
+    We are currently processing your order. You will receive tracking information once it ships.
+
+    Thank you again for choosing us.
+
+    Best regards,  
+    The e~Gadgets Team
+    `,
     };
+
 
     await transporter.sendMail(mailOptions);
 
@@ -124,7 +144,7 @@ const getOrderByUserId = async (req, res) => {
     if (!orders || orders.length === 0) {
       return res.status(404).json({ message: "No orders found for this userId" });
     }
-    
+
     console.log('Populated Orders:', orders);  // Check output here
 
     res.status(200).json(orders);

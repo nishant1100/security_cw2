@@ -1,56 +1,62 @@
 
 const express = require("express");
-const cors = require("cors"); // Import CORS middleware
-const connectDb = require("./config/db");
+const cors = require("cors");
+const morgan = require("morgan");
+const path = require("path");
+require("dotenv").config(); // ✅ Load env vars early
+const connectDB = require("./config/db");
+
+// Import Routes
 const UserRouter = require("./routes/userRoute");
 const ProductRouter = require("./routes/ProductRoute");
-const CommunityPostRoute = require('./routes/CommunityPostRoute');
+const CommunityPostRoute = require("./routes/CommunityPostRoute");
 const AuthRouter = require("./routes/AuthRoute");
 const OrderRouter = require("./routes/OrderRoute");
 const AdminRouter = require("./routes/AdminRoute");
 const AdminRoutes2 = require("./stats/adminStats");
-const cartRoutes = require("./routes/CartRoutes")
-const morgan = require("morgan");
+const cartRoutes = require("./routes/CartRoutes");
+const esewaRoute = require('./routes/EsewaRoute');
 
 
+// Initialize Express app
 const app = express();
 
-// Connect to Database
-connectDb();
+// ✅ Connect to MongoDB
+connectDB();
 
-// Use CORS Middleware
+// ✅ Middleware
 app.use(cors({
-  origin: "http://localhost:5173", // Replace with your React frontend URL
-  credentials: true, // Allow credentials (cookies, authentication headers)
-  methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
-  allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+  origin: "http://localhost:5173", // Change if your frontend is hosted elsewhere
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-// Middleware to parse JSON requests
-app.use(express.json());
 
-const path = require("path");
+app.use(express.json()); // Parse JSON requests
+app.use(morgan("dev"));  // Log requests
+app.use("/images", express.static(path.join(__dirname, "images"))); // Serve static images
 
-app.use("/images", express.static(path.join(__dirname, "images")));
-app.use(morgan("dev")); // 👈 logs all requests
-
-
-
-// Define Routes
-app.use("/api/orders", OrderRouter);
+// ✅ Routes
 app.use("/api/user", UserRouter);
 app.use("/api/product", ProductRouter);
 app.use("/api/communityposts", CommunityPostRoute);
 app.use("/api/auth", AuthRouter);
+app.use("/api/orders", OrderRouter);
 app.use("/api/admin", AdminRouter);
-app.use("/api/admin2", AdminRoutes2)
+app.use("/api/admin2", AdminRoutes2);
 app.use("/api/cart", cartRoutes);
-// Set Server Port
-const port = 3000;
+app.use('/api/esewa', esewaRoute);
 
-app.listen(port, () => {
-  console.log(`Server Running at http://localhost:${port}`);
+
+
+
+// ✅ Start Server
+const PORT = process.env.PORT || 3000;
+console.log("Esewa route loaded:", esewaRoute.stack?.map(r => r.route?.path));
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
-
 
 module.exports = app;

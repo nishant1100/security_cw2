@@ -1,6 +1,6 @@
-import { Link, useNavigate } from "react-router-dom";
-import { HiOutlineShoppingCart } from "react-icons/hi2";
 import { HiOutlineUser } from "react-icons/hi";
+import { HiOutlineShoppingCart } from "react-icons/hi2";
+import { Link, useNavigate } from "react-router-dom";
 
 import avatarImg from "../assets/avatar.png";
 import footerLogo from "../assets/EGadget_logo.png";
@@ -8,18 +8,24 @@ import footerLogo from "../assets/EGadget_logo.png";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
-const navigation = [
-  { name: "Dashboard", href: "/user-dashboard" },
-  { name: "Orders", href: "/orders" },
-  { name: "Cart Page", href: "/cart" },
-  { name: "Check Out", href: "/checkout" },
-];
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const cartItems = useSelector((state) => state.cart.cartItems);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+
+  // Get userId safely (assuming it's stored in localStorage)
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?._id;
+
+  const navigation = [
+    { name: "Profile", href: userId ? `/profile/${userId}` : "/login" },
+    { name: "Orders", href: "/orders" },
+    { name: "Cart Page", href: "/cart" },
+    { name: "Check Out", href: "/checkout" },
+  ];
+
 
   const handleLogOut = () => {
     localStorage.removeItem("token");

@@ -10,6 +10,7 @@ router.get("/", findAll);
 router.post("/", UserValidation, save);
 
 // Get a user by ID
+
 router.get("/:id", findById);
 
 // Delete a user by ID

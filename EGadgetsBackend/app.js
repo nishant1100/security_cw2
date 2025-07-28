@@ -7,7 +7,7 @@ require("dotenv").config(); // ✅ Load env vars early
 const connectDB = require("./config/db");
 
 // Import Routes
-const UserRouter = require("./routes/userRoute");
+const UserRouter = require("./routes/UserRoute");
 const ProductRouter = require("./routes/ProductRoute");
 const CommunityPostRoute = require("./routes/CommunityPostRoute");
 const AuthRouter = require("./routes/AuthRoute");

@@ -63,11 +63,11 @@ const OrderPage = () => {
                                     key={product._id}
                                     className="flex border rounded-lg p-3 shadow hover:shadow-md transition duration-300"
                                 >
-                                    <img
+                                    {/* <img
                                     src={product?.productImage || "/placeholder.png"}
                                     alt={product?.productName || "Product"}
                                     className="w-24 h-24 object-cover rounded mr-4 border"
-                                    />
+                                    /> */}
                                     <div>
                                     <h5 className="text-lg font-bold text-gray-800">
                                         {product?.productName || "Unnamed Product"}

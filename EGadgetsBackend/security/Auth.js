@@ -27,6 +27,4 @@ function authorizeRole(role){
     }
 }
 
-
-
 module.exports={authenticateToken,authorizeRole}

@@ -7,6 +7,8 @@ const ROLES = {
   MODERATOR: 'moderator'
 };
 
+
+
 // Permission definitions
 const PERMISSIONS = {
   // User permissions

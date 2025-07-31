@@ -6,6 +6,9 @@ import { RouterProvider } from 'react-router-dom';
 import router from './routers/router.jsx';
 import { SessionProvider } from './context/SessionContext';
 
+
+
+
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <SessionProvider>

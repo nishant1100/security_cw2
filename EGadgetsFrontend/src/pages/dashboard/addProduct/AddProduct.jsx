@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import InputField from '../addProduct/InputField'; // Assuming your InputField component
 import SelectField from '../addProduct/SelectField'; // Assuming your SelectField component
+import { useSessionContext } from '../../../context/SessionContext';
+import getBaseUrl from '../../../utils/baseURL';
 
 const AddProduct = () => {
   const { register, handleSubmit, setValue, formState: { errors } } = useForm();
@@ -10,8 +12,29 @@ const AddProduct = () => {
   const [productFile, setProductFile] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');  // State to store success message
   const [errorMessage, setErrorMessage] = useState('');  // State to store error message
+  const [isLoading, setIsLoading] = useState(false);
+  const [csrfToken, setCsrfToken] = useState('');
+  const { getAuthToken } = useSessionContext();
+
+  // Fetch CSRF token when component mounts
+  useEffect(() => {
+    const fetchCSRFToken = async () => {
+      try {
+        const response = await axios.get(`${getBaseUrl()}/api/csrf-token`, { withCredentials: true });
+        if (response.data && response.data.csrfToken) {
+          setCsrfToken(response.data.csrfToken);
+          console.log('CSRF token fetched successfully');
+        }
+      } catch (error) {
+        console.error('Failed to fetch CSRF token:', error);
+      }
+    };
+    
+    fetchCSRFToken();
+  }, []);
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     const formData = new FormData();
     formData.append('title', data.title);
     formData.append('productName', data.productName);
@@ -22,20 +45,49 @@ const AddProduct = () => {
     formData.append('trending', data.trending);
     if (productImage) formData.append('productImage', productImage);
     if (productFile) formData.append('productFile', productFile);
+    
+    // Add CSRF token to the form data as well as headers
+    if (csrfToken) formData.append('_csrf', csrfToken);
 
+    // Get the authorization token from session context
+    const token = getAuthToken();
+    
     try {
-      const response = await axios.post('http://localhost:3000/api/product/create-product', formData, {
+      // Ensure we're using the correct baseURL
+      const baseUrl = getBaseUrl();
+      console.log('Using base URL:', baseUrl);
+      
+      // Log the token being used
+      console.log('Using token:', token ? 'Token present' : 'No token');
+      console.log('CSRF token:', csrfToken ? 'Present' : 'Missing');
+      
+      const response = await axios.post(`${baseUrl}/api/product/create-product`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`,
+          'X-CSRF-Token': csrfToken
         },
+        withCredentials: true
       });
       console.log(response.data); // Log the success message
       setSuccessMessage('Product added successfully!');  // Set the success message
       setErrorMessage('');  // Reset the error message (if any)
     } catch (error) {
-      console.error('Error creating product:', error.response.data);
-      setErrorMessage('Failed to add product. Please try again.');  // Set the error message
+      console.error('Error creating product:', error);
+      console.error('Response data:', error.response?.data);
+      console.error('Response status:', error.response?.status);
+      
+      // Provide more detailed error message
+      if (error.response?.status === 400) {
+        setErrorMessage(`Bad Request: ${error.response?.data || 'Invalid input data'}`);
+      } else if (error.response?.status === 401) {
+        setErrorMessage('Authentication failed: Invalid or expired token');
+      } else {
+        setErrorMessage(`Failed to add product: ${error.response?.data?.message || error.message || 'Unknown error'}`);
+      }
       setSuccessMessage('');  // Reset the success message (if any)
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -156,11 +208,12 @@ const AddProduct = () => {
         </div>
 
         {/* Submit Button */}
-        <button 
-          type="submit" 
-          className="w-full py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600"
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={`w-full py-2 ${isLoading ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'} text-white font-bold rounded-md`}
         >
-          Create Product
+          {isLoading ? 'Creating Product...' : 'Create Product'}
         </button>
       </form>
     </div>

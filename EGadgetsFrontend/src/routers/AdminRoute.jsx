@@ -1,12 +1,15 @@
-import React from 'react'
-import { Navigate, Outlet } from 'react-router-dom';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useSessionContext } from '../context/SessionContext';
 
-const AdminRoute = ({children}) => {
-  const token = localStorage.getItem('token');
-  if(!token) {
-    return <Navigate to="/admin"/>
+const AdminRoute = ({ children }) => {
+  const { isAuthenticated, isAdmin } = useSessionContext();
+
+  if (!isAuthenticated || !isAdmin) {
+    return <Navigate to="/admin" replace />;
   }
-  return children ?  children : <Outlet/>;
-}
 
-export default AdminRoute
+  return children;
+};
+
+export default AdminRoute;

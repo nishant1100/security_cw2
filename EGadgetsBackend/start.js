@@ -1,9 +1,7 @@
-//index.js
-require('dotenv').config();
 const app = require('./app');
 const { logger } = require('./config/security');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const server = app.listen(PORT, () => {
   logger.info(`🚀 Server running at http://localhost:${PORT}`);
@@ -19,6 +17,12 @@ const server = app.listen(PORT, () => {
   console.log(`   • Multi-Factor Authentication`);
   console.log(`   • Password Strength Validation`);
   console.log(`   • reCAPTCHA Integration`);
+  console.log(`\n🔑 Admin Login Credentials:`);
+  console.log(`   Username: admin`);
+  console.log(`   Password: admin123`);
+  console.log(`   Email: aryanbudathoki44@gmail.com`);
+  console.log(`   URL: http://localhost:5173/admin-test`);
+  console.log(`\n🔧 To stop the server, press Ctrl+C`);
 });
 
 // Graceful shutdown
@@ -49,4 +53,4 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
-module.exports = server;
+module.exports = server; 

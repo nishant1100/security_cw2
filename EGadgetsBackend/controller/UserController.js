@@ -1,8 +1,7 @@
-const Credential = require("../model/Credentials"); // ✅ Correct model name
-
+const Credential = require("../model/Credentials");  
 const findAll = async (req, res) => {
   try {
-    const users = await Credential.find(); // ✅ Use Credential model
+    const users = await Credential.find();  
     res.status(200).json(users);
   } catch (e) {
     res.status(500).json({ error: "Error fetching users", message: e.message });
@@ -11,7 +10,7 @@ const findAll = async (req, res) => {
 
 const save = async (req, res) => {
   try {
-    const user = new Credential(req.body); // ✅ Use Credential model
+    const user = new Credential(req.body); 
     await user.save();
     res.status(201).json(user);
   } catch (e) {
@@ -23,7 +22,7 @@ const save = async (req, res) => {
 const findById = async (req, res) => {
   const { id } = req.params;
   try {
-    const user = await Credential.findById(id); // ✅ Use Credential model
+    const user = await Credential.findById(id); 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -37,7 +36,7 @@ const findById = async (req, res) => {
 const deleteById = async (req, res) => {
   const { id } = req.params;
   try {
-    const user = await Credential.findByIdAndDelete(id); // ✅ Use Credential model
+    const user = await Credential.findByIdAndDelete(id); 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }

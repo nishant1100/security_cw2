@@ -20,7 +20,7 @@ const ManageProducts = () => {
     };
 
     const handleEditClick = (id) => {
-        navigate(`dashboard/edit-product/${id}`);
+        navigate(`/dashboard/update-product/${id}`);
     };
 
     return (
@@ -71,7 +71,7 @@ const ManageProducts = () => {
                                             Rs. {product.new_price.$numberDecimal}
                                         </td>
                                         <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 space-x-4">
-                                            <Link to={`/dashboard/edit-product/${product._id}`} className="font-medium text-indigo-600 hover:text-indigo-700 mr-2 hover:underline underline-offset-2">
+                                            <Link to={`/dashboard/update-product/${product._id}`} className="font-medium text-indigo-600 hover:text-indigo-700 mr-2 hover:underline underline-offset-2">
                                                 Edit
                                             </Link>
                                             <button 
@@ -92,3 +92,4 @@ const ManageProducts = () => {
 };
 
 export default ManageProducts;
+

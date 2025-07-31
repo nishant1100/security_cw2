@@ -1,15 +1,24 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import getBaseUrl from "../../../utils/baseURL";
+import Cookies from 'js-cookie';
 
 // Base query setup
 const baseQuery = fetchBaseQuery({
   baseUrl: `${getBaseUrl()}/api/product`, // Make sure getBaseUrl() returns the correct URL
   credentials: "include",
   prepareHeaders: (headers) => {
-    const token = localStorage.getItem("token");
+    // Get token from cookies instead of localStorage
+    const token = Cookies.get('authToken');
     if (token) {
       headers.set("authorization", `Bearer ${token}`);
     }
+    
+    // Add CSRF token if available
+    const csrfToken = localStorage.getItem('csrfToken');
+    if (csrfToken) {
+      headers.set('X-CSRF-Token', csrfToken);
+    }
+    
     return headers;
   },
 });
@@ -44,12 +53,16 @@ const productsApi = createApi({
 
     // Update a product
     updateProduct: builder.mutation({
-      query: ({ id, ...rest }) => ({
-        url: `/edit/${id}`,
-        method: "PUT",
-        body: rest,
-        headers: { "Content-Type": "application/json" },
-      }),
+      query: ({ id, body }) => {
+        // For FormData uploads, don't set Content-Type (browser will set it with boundary)
+        // This allows file uploads to work properly
+        return {
+          url: `/edit/${id}`,
+          method: "PUT",
+          body: body, // This is the FormData object directly from the component
+          formData: true,
+        };
+      },
       invalidatesTags: ["Product"],
     }),
 

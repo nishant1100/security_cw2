@@ -9,11 +9,13 @@ import SingleProduct from "../pages/products/SingleProduct";
 import OrderPage from "../pages/products/OrderPage";
 import AdminRoute from "./AdminRoute";
 import AdminLogin from "../components/AdminLogin";
+import TestAdminLogin from "../components/TestAdminLogin";
 import DasboardLayout from "../pages/dashboard/DasboardLayout";
 import Dashboard from "../pages/dashboard/DashBoard";
 import ManageProducts from "../pages/dashboard/manageProducts/ManageProducts";
 import AddProduct from "../pages/dashboard/addProduct/AddProduct";
 import UpdateProduct from "../pages/dashboard/updateProduct/UpdateProduct";
+import LogsPage from "../pages/dashboard/LogsPage";
 import BrowsePage from "../pages/products/BrowsePage";
 import Verify from "../utils/verifyUser";
 import PaymentSuccess from "../pages/payment/PaymentSuccess";
@@ -36,25 +38,25 @@ const router = createBrowserRouter([
             { path: '/products/:id', element: <SingleProduct /> },
             { path: '/verify-success', element: <Verify /> },
             { path: "/profile/:id", element: <UserProfile /> },
-
-            
+            { path: '/admin', element: <AdminLogin /> },
             // Payment result pages
             { path: '/payment-success', element: <PaymentSuccess /> },
             { path: '/payment-failed', element: <PaymentFailed /> },
         ]
     },
     {
-        path: '/admin',
-        element: <AdminLogin />
+        path: '/admin-test',
+        element: <TestAdminLogin />
     },
     {
         path: '/dashboard',
         element: <AdminRoute><DasboardLayout /></AdminRoute>,
         children: [
             { path: '', element: <AdminRoute><Dashboard /></AdminRoute> },
-            { path: 'add-new-product', element: <AdminRoute><AddProduct /></AdminRoute> },
-            { path: 'edit-product/:id', element: <AdminRoute><UpdateProduct /></AdminRoute> },
+            { path: "logs", element: <AdminRoute><LogsPage /></AdminRoute> },
             { path: "manage-product", element: <AdminRoute><ManageProducts /></AdminRoute> },
+            { path: "add-new-product", element: <AdminRoute><AddProduct /></AdminRoute> },
+            { path: "update-product/:id", element: <AdminRoute><UpdateProduct /></AdminRoute> },
         ]
     }
 ]);

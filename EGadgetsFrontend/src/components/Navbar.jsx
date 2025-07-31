@@ -7,28 +7,24 @@ import footerLogo from "../assets/EGadget_logo.png";
 
 import { useState } from "react";
 import { useSelector } from "react-redux";
-
+import { useSessionContext } from '../context/SessionContext';
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const cartItems = useSelector((state) => state.cart.cartItems);
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-
-  // Get userId safely (assuming it's stored in localStorage)
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user?._id;
+  
+  const { user, isAuthenticated, clearSession } = useSessionContext();
 
   const navigation = [
-    { name: "Profile", href: userId ? `/profile/${userId}` : "/login" },
+    { name: "Profile", href: user?._id ? `/profile/${user._id}` : "/login" },
     { name: "Orders", href: "/orders" },
     { name: "Cart Page", href: "/cart" },
     { name: "Check Out", href: "/checkout" },
   ];
 
-
   const handleLogOut = () => {
-    localStorage.removeItem("token");
+    clearSession();
     navigate("/login");
   };
 
@@ -65,7 +61,7 @@ const Navbar = () => {
         {/* Right Icons Section */}
         <div className="relative flex items-center space-x-3">
           <div>
-            {token ? (
+            {isAuthenticated ? (
               <>
                 <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                   <img

@@ -157,10 +157,10 @@ function PaymentSuccess() {
                     <span className="text-gray-600">Transaction ID:</span>
                     <span className="font-medium">{paymentData.transaction_uuid || 'N/A'}</span>
                   </div>
-                  {/* <div className="flex justify-between">
+                  <div className="flex justify-between">
                     <span className="text-gray-600">Amount:</span>
                     <span className="font-medium">Rs. {paymentData.totalAmount || 'N/A'}</span>
-                  </div> */}
+                  </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Status:</span>
                     <span className="font-medium text-green-600">{paymentData.status || 'COMPLETE'}</span>

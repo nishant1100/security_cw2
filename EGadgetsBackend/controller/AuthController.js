@@ -1,182 +1,274 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
-const Credential = require("../model/Credentials");
+const Credential = require('../model/Credentials');
+// const nodemailer = require('nodemailer');
+const Admin = require('../model/Admin');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+const { logActivity, sanitizeInput } = require('../config/security');
 
-const SECRET_KEY =
-  "0ce475b473a1605178f5371eb112e92d42fc0c521dfb2a6f01ffa60568dabc32";
+const JWT_SECRET = process.env.JWT_SECRET || "80ce475b473a1605178f5371eb112e92d42fc0c521dfb2a6f01ffa60568dabc32";
 
-// Configure Nodemailer
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: "nishantkjnkrstha10@gmail.com",
-    pass: "bkvs rcat vkvm zqxw",
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-});
+// Generate MFA code
+const generateMFACode = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
 
-// ✅ Send Verification Email
-const sendVerificationEmail = async (email, token) => {
-  const verificationLink = `http://localhost:3000/api/auth/verify?token=${token}`;
+// Store MFA codes temporarily (in production, use Redis)
+const mfaCodes = new Map();
+
+// Send verification email
+const sendVerificationEmail = async (email, verificationCode) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER || "nishantkjnkrstha10@gmail.com",
+      pass: process.env.EMAIL_PASS || "bkvs rcat vkvm zqxw",
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
 
   const mailOptions = {
     from: '"e~Gadgets" <nishantkjnkrstha10@gmail.com>',
     to: email,
-    subject: "Confirm Your Registration",
+    subject: "Email Verification",
     html: `
-            <p>Click the button below to confirm your registration:</p>
-            <a href="${verificationLink}" 
-                style="display:inline-block;padding:10px 20px;background-color:#4CAF50;color:white;text-decoration:none;border-radius:5px;">
-                Confirm Registration
-            </a>
-            <p>If you did not request this, please ignore this email.</p>
+            <p>Your verification code is: <strong>${verificationCode}</strong></p>
+            <p>This code will expire in 10 minutes.</p>
         `,
   };
 
   await transporter.sendMail(mailOptions);
 };
 
-// ✅ Register User (Sends Verification Email)
+// ✅ Register Route
 const register = async (req, res) => {
+  const { username, email, password, bio, recaptchaToken } = req.body;
   try {
-    const { username, email, password, profilePicture, bio } = req.body;
+    // Sanitize inputs
+    const sanitizedUsername = sanitizeInput(username);
+    const sanitizedEmail = sanitizeInput(email);
+    const sanitizedBio = sanitizeInput(bio);
 
-    // Check if user exists
+    // Check if user already exists
     const existingUser = await Credential.findOne({
-      $or: [{ username }, { email }],
+      $or: [{ email: sanitizedEmail }, { username: sanitizedUsername }]
     });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "Username or email already exists" });
+      logActivity('anonymous', 'REGISTRATION_FAILED', {
+        reason: 'User already exists',
+        email: sanitizedEmail,
+        ip: req.ip
+      });
+      return res.status(400).json({ message: "User already exists" });
     }
 
-    // Create token with user details (valid for 1 hour)
-    const token = jwt.sign(
-      { username, email, password, profilePicture, bio },
-      SECRET_KEY,
-      { expiresIn: "1h" }
-    );
-
-    // Send verification email
-    await sendVerificationEmail(email, token);
-
-    res
-      .status(200)
-      .json({ message: "Verification email sent. Please check your inbox." });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error during registration", error: error.message });
-  }
-};
-
-// ✅ Verify & Save User when clicking the email link
-// ✅ Verify & Save User when clicking the email link
-const verifyUser = async (req, res) => {
-  try {
-    const { token } = req.query;
-
-    if (!token) {
-      return res.status(400).json({ message: "No token provided" });
-    }
-
-    // Decode token
-    const decoded = jwt.verify(token, SECRET_KEY);
-    const { username, email, password, profilePicture, bio } = decoded;
-
-    // Check if the user already exists in the database
-    const existingUser = await Credential.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already verified or registered" });
-    }
-
-    // Hash password and save the user to the database
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new Credential({ username, email, password: hashedPassword, profilePicture, bio: bio || "" });
+    // Create new user directly (no email verification)
+    const newUser = new Credential({
+      username: sanitizedUsername,
+      email: sanitizedEmail,
+      password,
+      bio: sanitizedBio
+    });
     await newUser.save();
 
-    // ✅ Redirect user to React verification success page
-    res.redirect("http://localhost:5173/verify-success");
-
+    logActivity(newUser.username || newUser.email, 'USER_REGISTERED', {
+      email: sanitizedEmail,
+      username: sanitizedUsername,
+      ip: req.ip
+    });
+    res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
-    res.status(400).json({ message: "Verification failed", error: error.message });
+    console.error("Registration failed:", error);
+    logActivity('anonymous', 'REGISTRATION_ERROR', {
+      error: error.message,
+      ip: req.ip
+    });
+    res.status(500).json({ message: "Registration failed" });
   }
 };
 
+// Store MFA codes for users
+const userMFACodes = new Map();
 
+// Send MFA Email for User
+const sendUserMFAEmail = async (email, code) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER || "nishantkjnkrstha10@gmail.com",
+      pass: process.env.EMAIL_PASS || "bkvs rcat vkvm zqxw",
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
+  const mailOptions = {
+    from: '"e~Gadgets" <nishantkjnkrstha10@gmail.com>',
+    to: email,
+    subject: "User Login Verification Code",
+    html: `
+      <p>Your user verification code is: <strong>${code}</strong></p>
+      <p>This code will expire in 10 minutes.</p>
+      <p>If you did not request this code, please contact system administrator immediately.</p>
+    `,
+  };
+  await transporter.sendMail(mailOptions);
+};
+
+// ✅ Login Route with MFA
 const login = async (req, res) => {
+  const { username, password, mfaCode, recaptchaToken } = req.body;
   try {
-    const { username, password } = req.body;
-
-    // Find user
-    const cred = await Credential.findOne({ username });
-    if (!cred) {
-      return res.status(403).json({ message: "Invalid username or password" });
-    }
-
-    // Validate password
-    const isPasswordValid = await bcrypt.compare(password, cred.password);
-    if (!isPasswordValid) {
-      return res.status(403).json({ message: "Invalid username or password" });
-    }
-
-    // Generate token
-    const token = jwt.sign({ username: cred.username }, SECRET_KEY, {
-      expiresIn: "2h",
+    // Sanitize username
+    const sanitizedUsername = sanitizeInput(username);
+    // Find user by username or email in Credential model
+    const user = await Credential.findOne({
+      $or: [{ username: sanitizedUsername }, { email: sanitizedUsername }]
     });
-
-    res.json({
-      message: "Login successful",
-      token,
-      user: {
-        _id: cred._id,
-        username: cred.username,
-        email: cred.email,
-      },
-    });
-
+    if (!user) {
+      logActivity(sanitizedUsername, 'LOGIN_FAILED', {
+        reason: 'User not found',
+        ip: req.ip
+      });
+      return res.status(401).json({ message: "Invalid username or password" });
+    }
+    // Verify password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      logActivity(user._id, 'LOGIN_FAILED', {
+        reason: 'Invalid password',
+        ip: req.ip
+      });
+      return res.status(401).json({ message: "Invalid username or password" });
+    }
+    // MFA step 1: If no mfaCode, generate and send, store in backend
+    if (!mfaCode) {
+      const generatedCode = generateMFACode();
+      userMFACodes.set(user._id.toString(), {
+        code: generatedCode,
+        expires: Date.now() + (10 * 60 * 1000) // 10 minutes
+      });
+      await sendUserMFAEmail(user.email, generatedCode);
+      logActivity(user._id, 'USER_MFA_CODE_SENT', {
+        email: user.email,
+        ip: req.ip
+      });
+      return res.status(200).json({ 
+        message: "MFA code sent to your email",
+        requiresMFA: true
+      });
+    } else {
+      // MFA step 2: verify code
+      const storedCode = userMFACodes.get(user._id.toString());
+      console.log('DEBUG USER MFA:', {
+        stored: storedCode,
+        received: mfaCode,
+        userId: user._id.toString()
+      });
+      if (!storedCode || storedCode.code !== mfaCode || Date.now() > storedCode.expires) {
+        logActivity(user._id, 'USER_MFA_FAILED', {
+          ip: req.ip,
+          storedCode,
+          receivedCode: mfaCode
+        });
+        return res.status(403).json({ message: "Invalid or expired MFA code" });
+      }
+      logActivity(user._id, 'USER_MFA_SUCCESS', {
+        ip: req.ip,
+        storedCode,
+        receivedCode: mfaCode
+      });
+      userMFACodes.delete(user._id.toString());
+      // MFA success: forward to dashboard (frontend should handle navigation)
+      // Generate JWT token
+      const token = jwt.sign(
+        { id: user._id, username: user.username, email: user.email },
+        JWT_SECRET,
+        { expiresIn: "24h" }
+      );
+      res.cookie('authToken', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000,
+        path: '/'
+      });
+      logActivity(user.username || user.email, 'LOGIN_SUCCESS', {
+        username: user.username,
+        email: user.email,
+        ip: req.ip
+      });
+      res.status(200).json({
+        message: "Login successful",
+        token: token,
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email
+        }
+      });
+    }
   } catch (error) {
-    res.status(500).json({ message: "Error logging in", error: error.message });
+    console.error("Login failed:", error);
+    logActivity('anonymous', 'LOGIN_ERROR', {
+      error: error.message,
+      ip: req.ip
+    });
+    res.status(500).json({ message: "Login failed" });
   }
 };
 
-// Upload profile picture separately
-const uploadProfilePicture = async (req, res) => {
+// ✅ Logout Route
+const logout = async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" });
-    }
+    // Clear cookies
+    res.clearCookie('authToken', { path: '/' });
+    res.clearCookie('sessionId', { path: '/' });
+    
+    logActivity(req.user?.id || 'anonymous', 'LOGOUT', {
+      ip: req.ip
+    });
 
-    const filePath = req.file.filename; // Store only the filename
-
-    res.json({ message: "Image uploaded successfully", data: filePath });
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error uploading image", error: error.message });
+    console.error("Logout failed:", error);
+    res.status(500).json({ message: "Logout failed" });
   }
 };
 
-const getUserById = async (req, res) => {
+// ✅ Verify User Route
+const verifyUser = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const user = await Credential.findById(id).select("-password"); // Exclude password for security
+    const { verificationCode } = req.body;
+    const user = await User.findOne({ verificationCode });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(400).json({ message: "Invalid verification code" });
     }
 
-    res.json(user);
+    user.isVerified = true;
+    user.verificationCode = undefined;
+    await user.save();
+
+    logActivity(user._id, 'EMAIL_VERIFIED', {
+      email: user.email,
+      ip: req.ip
+    });
+
+    res.status(200).json({ message: "Email verified successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Error fetching user", error: error.message });
+    console.error("Email verification failed:", error);
+    res.status(500).json({ message: "Email verification failed" });
   }
 };
 
-module.exports = { register, verifyUser, login, uploadProfilePicture, getUserById };
+module.exports = {
+  register,
+  login,
+  logout,
+  verifyUser
+};
 
 

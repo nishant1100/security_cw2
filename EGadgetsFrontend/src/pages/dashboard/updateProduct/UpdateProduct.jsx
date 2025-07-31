@@ -5,7 +5,8 @@ import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import getBaseUrl from '../../../utils/baseURL';
-import { useFetchProductByIdQuery, useUpdateProductMutation } from '../../../redux/features/products/productApi';
+import { useFetchProductByIdQuery } from '../../../redux/features/products/productApi';
+import Cookies from 'js-cookie';
 
 const UpdateProduct = () => {
   const { id } = useParams();
@@ -29,6 +30,26 @@ const UpdateProduct = () => {
     }
   }, [productData, setValue]);
 
+  // State to store CSRF token
+  const [csrfToken, setCsrfToken] = useState('');
+
+  // Fetch CSRF token
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      try {
+        const response = await axios.get(`${getBaseUrl()}/api/csrf-token`, { withCredentials: true });
+        if (response.data && response.data.csrfToken) {
+          setCsrfToken(response.data.csrfToken);
+          localStorage.setItem('csrfToken', response.data.csrfToken);
+          console.log('CSRF token fetched:', response.data.csrfToken);
+        }
+      } catch (error) {
+        console.error('Error fetching CSRF token:', error);
+      }
+    };
+    fetchCsrfToken();
+  }, []);
+
   const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append('title', data.title);
@@ -40,20 +61,46 @@ const UpdateProduct = () => {
     formData.append('coverImage', data.coverImage || productData.coverImage);
     if (productImage) formData.append('productImage', productImage);
     if (productFile) formData.append('productFile', productFile);
+    
+    // Add CSRF token to the form data
+    console.log('Using CSRF token:', csrfToken);
+    formData.append('_csrf', csrfToken);
 
     try {
-      await axios.put(`${getBaseUrl()}/api/product/edit/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+      // Use the updateProduct mutation from RTK Query
+      // We need to create a proper request structure for RTK Query
+      // Since we can't convert FormData to a plain object easily with files
+      // Log the contents of the FormData for debugging
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+      }
+
+      // Get auth token from cookies
+      const authToken = Cookies.get('authToken');
+      console.log('Using auth token:', authToken ? 'Present' : 'Missing');
+      
+      // Make direct axios request instead of using the RTK Query mutation
+      const response = await axios.put(
+        `${getBaseUrl()}/api/product/edit/${id}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'X-CSRF-Token': csrfToken,
+            'Authorization': `Bearer ${authToken}`
+          },
+          withCredentials: true
         }
-      });
+      );
+      
+      const result = response.data;
+      
       setSuccessMessage('Product updated successfully!');
       setErrorMessage('');
       await refetch();
     } catch (error) {
-      console.error('Error updating product:', error.response.data);
-      setErrorMessage('Failed to update product. Please try again.');
+      console.error('Error updating product:', error);
+      setErrorMessage(error.data?.message || 'Failed to update product. Please try again.');
       setSuccessMessage('');
     }
   };

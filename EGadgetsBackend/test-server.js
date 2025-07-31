@@ -19,8 +19,8 @@ describe('Server Startup Test', () => {
   });
 });
 
-// console.log('✅ Server test completed successfully!');
-// console.log('🚀 You can now start the server with: node start.js'); 
+console.log('✅ Server test completed successfully!');
+console.log('🚀 You can now start the server with: node start.js'); 
 
 
 console.log('✅ Server test completed successfully!');
